@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Stage') {
+            steps {
+                git 'https://github.com/mohitsoniv/demo.git'
+            }
+        }
+
+        stage('Build Stage') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Test Stage') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+
+        stage('Deploy Stage') {
+            steps {
+                // bat 'mvn deploy'
+            }
+        }
+    }
+}
