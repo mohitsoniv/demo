@@ -10,19 +10,19 @@ pipeline {
 
         stage('Build Stage') {
             steps {
-                bat 'mvn clean package'
+                sh 'mvn clean package'
             }
         }
 
         stage('Test Stage') {
             steps {
-                bat 'mvn test'
+                sh 'mvn test'
             }
         }
 
         stage('Deploy Stage') {
             steps {
-                // bat 'mvn deploy'
+                // sh 'mvn deploy'
                 echo 'Deploy step is currently commented out.'
             }
         }
