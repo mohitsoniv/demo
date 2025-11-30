@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tool {
+     maven 'MAVEN_HOME'
+    }
+
     stages {
         stage('Checkout Stage') {
             steps {
