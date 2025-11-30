@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    // Ensure this tool name exists in Jenkins Global Tool Configuration
+    jdk 'JDK11'
     maven 'MAVEN_HOME'
   }
 
