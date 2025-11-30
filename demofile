@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Stage') {
             steps {
-                git 'https://github.com/mohitsoniv/demo.git'
+                git url: 'https://github.com/mohitsoniv/demo.git'
             }
         }
 
