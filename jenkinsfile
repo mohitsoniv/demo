@@ -1,41 +1,59 @@
+// Jenkinsfile — Declarative pipeline (Windows agent)
+// Copy this file to the repository root as "Jenkinsfile".
+// Edit the tool names in the `tools {}` block to match Manage Jenkins → Global Tool Configuration.
+// If your agent is Linux, replace `bat` with `sh` where indicated.
+
 pipeline {
   agent any
 
-  // Make sure these tool names exist in Manage Jenkins → Global Tool Configuration
+  // Make sure these exact names exist in Manage Jenkins -> Global Tool Configuration
   tools {
-    jdk 'JDK11'         // <-- change to the exact name you configured for your JDK
-    maven 'MAVEN_HOME'  // <-- change to the exact name you configured for Maven
+    jdk 'JDK11'         // <-- change to the exact JDK name you configured (case-sensitive)
+    maven 'MAVEN_HOME'  // <-- change to the exact Maven name you configured
   }
 
   environment {
-    MVN_ARGS = '-B' // batch mode; add other common mvn args here if needed
+    MVN_ARGS = '-B' // Maven batch mode
   }
 
   stages {
     stage('Verify Tools') {
       steps {
-        // Print environment and versions so we can debug quickly if something is missing
+        // Diagnostic output to make failures obvious in the console
         bat 'echo ========== ENV =========='
+        bat 'echo USER=%USERNAME%'
         bat 'echo JAVA_HOME=%JAVA_HOME%'
         bat 'echo PATH=%PATH%'
         bat 'echo ========== JAVA =========='
-        bat 'where java || echo java not found'
-        bat 'java -version || echo java -version failed'
+        bat 'where java || echo "where java returned non-zero"'
+        bat 'java -version || echo "java -version failed"'
         bat 'echo ========== MAVEN =========='
-        bat 'where mvn || echo mvn not found'
-        bat 'mvn -version || echo mvn -version failed'
+        bat 'where mvn || echo "where mvn returned non-zero"'
+        bat 'mvn -version || echo "mvn -version failed"'
       }
     }
 
     stage('Welcome Stage') {
       steps {
-        echo "Welcome to Jenkins Stage"
+        echo "Welcome to the Jenkins pipeline"
       }
     }
 
     stage('Clean') {
       steps {
-        // mvn clean will fail if JAVA_HOME is not set correctly
+        script {
+          // Fail fast with a clear message if Java isn't available
+          if (!env.JAVA_HOME?.trim()) {
+            error("""
+              JAVA_HOME is not set for the agent.
+              Fix options:
+                1) Configure a JDK under Manage Jenkins -> Global Tool Configuration and set the exact name in tools { jdk '<name>' }.
+                2) Install a JDK on the agent and set the machine-level JAVA_HOME (then restart Jenkins service).
+                3) Temporarily set JAVA_HOME in this pipeline environment block (not recommended long-term).
+            """.stripIndent())
+          }
+        }
+        // Windows agents use bat. If you're on Linux agents, change to: sh 'mvn clean'
         bat 'mvn clean'
       }
     }
@@ -57,8 +75,11 @@ pipeline {
     always {
       echo "Pipeline finished with status: ${currentBuild.currentResult}"
     }
+    success {
+      echo 'Post: success actions (optional)'
+    }
     failure {
-      echo "Failure post actions: verify that the JDK and Maven tool names match Global Tool Configuration and that JAVA_HOME is available on the agent."
+      echo 'Post: failure actions — check JAVA_HOME, tool names and agent configuration'
     }
   }
 }
