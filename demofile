@@ -25,6 +25,7 @@ pipeline {
                 // bat 'mvn deploy'
             }
         }
+}
         post {
             success {
                 echo 'Pipeline completed successfully!'
@@ -34,5 +35,4 @@ pipeline {
         }
 
     }
-}
 }
