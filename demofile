@@ -23,8 +23,20 @@ pipeline {
         stage('Deploy Stage') {
             steps {
                 // bat 'mvn deploy'
+                echo 'Deploy step is currently commented out.'
             }
         }
+   }
+   post {
+       success {
+           echo 'Pipeline completed successfully!'
+       }
+       failure {
+           echo 'Pipeline failed. Please check the logs.'
+       }
+       always {
+        echo 'Cleanup/notifications can go here.'
+   }
 }
 }
 
