@@ -10,6 +10,8 @@ pipeline {
     stage('Welcome Stage') {
       steps {
         echo "Welcome to Jenkins Stage"
+        bat 'echo JAVA_HOME=%JAVA_HOME%'
+        bat 'echo PATH=%PATH%'
       }
     }
 
