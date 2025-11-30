@@ -1,30 +1,47 @@
 pipeline {
-    agent any 
-    tools {
-        maven 'MAVEN_HOME'
+  agent any
+
+  tools {
+    // Ensure this tool name exists in Jenkins Global Tool Configuration
+    maven 'MAVEN_HOME'
+  }
+
+  stages {
+    stage('Welcome Stage') {
+      steps {
+        echo "Welcome to Jenkins Stage"
+      }
     }
-    stages {
-        stage('Welcome Stage') {
-            echo "Welcome to Jenkins Stage"
 
-        }
-    
-        stage('clean stage') {
-            steps {
-                bat 'mvn clean'
-            }
-
-        }
+    stage('clean stage') {
+      steps {
+        // Use 'bat' for Windows agents; use 'sh' for Linux agents
+        bat 'mvn clean'
+      }
     }
-            stage('Build Stage') {
-                steps {
-                    bat 'mvn install'
-                }
-    
-            }
 
-        stage('Success Stage') {
-            echo "Pipeline executed successfully"
+    stage('Build Stage') {
+      steps {
+        bat 'mvn install'
+      }
+    }
 
-        }
-}    
+    stage('Success Stage') {
+      steps {
+        echo "Pipeline executed successfully"
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Pipeline finished with status: ${currentBuild.currentResult}"
+    }
+    success {
+      echo "Success post actions (optional)"
+    }
+    failure {
+      echo "Failure post actions (optional)"
+    }
+  }
+}
